@@ -10,7 +10,7 @@ Usage:
 	fetch-scte-segments manifest-url [options]
 Options:
 	--cue-in-only
-	If set, only QUE-IN segments are fetched. The defalut behavior is fetching both QUE-OUT/IN segments.
+	If set, only CUE-IN segments are fetched. The defalut behavior is fetching both CUE-OUT/IN segments.
 
 	--outdir=[relative path to the directory]
 	If specified, the fetched segment files are stored in the directory. The defalut outputdir path is "./log_YYYY-MM-DDTHH:MM:SS.SSSZ".
