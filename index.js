@@ -110,7 +110,7 @@ try {
   if (outfile) {
     // Concatenate the segments
     execSync(`cd ${outdir}; ffmpeg -allowed_extensions ALL -i index.m3u8 -c copy ${outfile}`);
-    console.log(`All the segments have been concatenated into "${outfile}"`);
+    console.log(`All the segments have been concatenated into "${outdir}/${outfile}"`);
   }
 
 } catch (err) {
@@ -125,7 +125,7 @@ function showMessageAndExit(msg, help=false, exitCode=0) {
     console.log('\tfetch-scte-segments manifest-url [options]');
     console.log('Options:');
     console.log('\t--cue-in-only');
-    console.log('\tIf set, only QUE-IN segments are fetched. The defalut behavior is fetching both QUE-OUT/IN segments.');
+    console.log('\tIf set, only CUE-IN segments are fetched. The defalut behavior is fetching both CUE-OUT/IN segments.');
     console.log('');
     console.log('\t--outdir=[relative path to the directory]');
     console.log('\tIf specified, the fetched segment files are stored in the directory. The defalut outputdir path is "./log_YYYY-MM-DDTHH:MM:SS.SSSZ".');
