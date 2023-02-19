@@ -1,0 +1,29 @@
+{
+  "name": "fetch-scte-segments",
+  "description": "CLI for parsing HLS playlist and fetching SCTE35 CUE-OUT/IN segments",
+  "version": "0.0.1",
+  "main": "index.js",
+  "type": "module",
+  "bin": {
+    "fetch-scte-segments": "index.js"
+  },
+  "scripts": {
+    "test": "node index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kuu/fetch-scte-segments.git"
+  },
+  "keywords": ["HLS", "SCTE", "CLI"],
+  "author": "Kuu Miyazaki",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/kuu/fetch-scte-segments/issues"
+  },
+  "homepage": "https://github.com/kuu/fetch-scte-segments#readme",
+  "dependencies": {
+    "hls-get-scte-segments": "^0.0.4",
+    "node-fetch": "^3.3.0"
+  },
+  "devDependencies": {}
+}
