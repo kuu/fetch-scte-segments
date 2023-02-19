@@ -43,7 +43,7 @@ try {
     showMessageAndExit('No SCTE segment was found');
   }
 
-  // List the URLs of CUE-OUT/CUE-IN segments
+  // Fetch CUE-OUT/CUE-IN segments
   const cueInSegments = [];
   const savedKeys = [];
   let targetDuration = 0;
@@ -61,14 +61,14 @@ try {
 
     targetDuration = Math.max(targetDuration, Math.ceil(segment.duration));
 
-    // Save the segment
+    // Fetch and store the segment
     const filepath = path.join(outdir, path.basename(plUrl.pathname));
     const response = await fetch(plUrl.href);
     const buffer = await response.arrayBuffer();
     const plainData = new Uint8Array(buffer);
     fs.writeFileSync(filepath, plainData);
 
-    // Save the key
+    // Store the key
     const keyUrl = new URL(key.uri, playlistUrl);
     const keyFilepath = path.join(outdir, path.basename(keyUrl.pathname));
     if (!savedKeys.includes(keyFilepath)) {
@@ -106,9 +106,9 @@ try {
 
   console.log(`${cueInSegments.length} segments have been written`);
 
+  // Concatenate the segments
   const outfile = checkArgs(args, '--outfile=');
   if (outfile) {
-    // Concatenate the segments
     execSync(`cd ${outdir}; ffmpeg -allowed_extensions ALL -i index.m3u8 -c copy ${outfile}`);
     console.log(`All the segments have been concatenated into "${outdir}/${outfile}"`);
   }
