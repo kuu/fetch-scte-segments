@@ -19,6 +19,6 @@ Options:
 	If specified, the fetched segment files are concatenated into a single file using FFmpeg. If not specified, the concatenation is skipped.
 Example:
 	$ fetch-scte-segments "https://example.com/live.m3u8?last-hour=6" --cue-in-only --outdir=SCTE_2023-01-01 --outfile=concatenated.ts
-        $ open concatenated.ts
+        $ open SCTE_2023-01-01/concatenated.ts
 ```
 * _Please make sure that FFmpeg is installed in case the `--outfile` option is specified._
