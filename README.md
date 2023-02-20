@@ -1,5 +1,5 @@
 # fetch-scte-segments
-CLI for parsing HLS playlist and fetching SCTE35 CUE-OUT/IN segments
+CLI for parsing HLS media playlist and fetching SCTE35 CUE-OUT/IN segments
 
 ## Install
 [![NPM](https://nodei.co/npm/fetch-scte-segments.png?mini=true)](https://nodei.co/npm/fetch-scte-segments/)
