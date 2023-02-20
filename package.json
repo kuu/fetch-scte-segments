@@ -1,7 +1,7 @@
 {
   "name": "fetch-scte-segments",
   "description": "CLI for parsing HLS playlist and fetching SCTE35 CUE-OUT/IN segments",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "main": "index.js",
   "type": "module",
   "bin": {
