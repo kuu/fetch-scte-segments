@@ -27,7 +27,7 @@ const outdir = checkArgs(args, '--outdir=', path.join(__dirname, `log_${formatDa
 try {
   fs.mkdirSync(outdir);
 } catch {
-  showMessageAndExit(`Unable to create outdir: "${outdiir}"`, true, 1);
+  showMessageAndExit(`Unable to create outdir: "${outdir}"`, true, 1);
 }
 
 const cueInOnly = checkArgs(args, '--cue-in-only');
@@ -48,18 +48,18 @@ try {
   const savedKeys = [];
   let targetDuration = 0;
   for (const segment of scteSegments) {
-    const {programDateTime, dateRange, uri, key, duration} = segment;
+    const {programDateTime, uri, key, duration} = segment;
     const plUrl = new URL(uri, playlistUrl);
     const pdt = programDateTime ? formatDate(programDateTime) : '';
 
-    console.log(`${pdt}, event_id=${dateRange.id}, ${plUrl.href}`);
+    console.log(`${pdt}, ${plUrl.href}`);
 
-    if (!dateRange.end && cueInOnly) {
+    if (cueInOnly && !isCueIn(segment)) {
       // Skip CUE-OUT
       continue;
     }
 
-    targetDuration = Math.max(targetDuration, Math.ceil(segment.duration));
+    targetDuration = Math.max(targetDuration, Math.ceil(duration));
 
     // Fetch and store the segment
     const filepath = path.join(outdir, path.basename(plUrl.pathname));
@@ -69,26 +69,29 @@ try {
     fs.writeFileSync(filepath, plainData);
 
     // Store the key
-    const keyUrl = new URL(key.uri, playlistUrl);
-    const keyFilepath = path.join(outdir, path.basename(keyUrl.pathname));
-    if (!savedKeys.includes(keyFilepath)) {
-      const headers = new Headers({
-        'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.3 Safari/605.1.15'
-      });
-      // console.log(`Fetch key: ${keyUrl.href}`);
-      const response = await fetch(keyUrl.href, {headers});
-      const buffer = await response.arrayBuffer();
-      const decryptionKey = new Uint8Array(buffer);
-      fs.writeFileSync(keyFilepath, decryptionKey);
-      savedKeys.push(keyFilepath);
+    if (key) {
+      const keyUrl = new URL(key.uri, playlistUrl);
+      const keyFilepath = path.join(outdir, path.basename(keyUrl.pathname));
+      if (!savedKeys.includes(keyFilepath)) {
+        const headers = new Headers({
+          'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.3 Safari/605.1.15'
+        });
+        // console.log(`Fetch key: ${keyUrl.href}`);
+        const response = await fetch(keyUrl.href, {headers});
+        const buffer = await response.arrayBuffer();
+        const decryptionKey = new Uint8Array(buffer);
+        fs.writeFileSync(keyFilepath, decryptionKey);
+        savedKeys.push(keyFilepath);
+      }
+      key.uri = path.basename(keyUrl.pathname);
     }
 
     // Modify the segment for playback
     delete segment.programDateTime;
     delete segment.dateRange;
+    segment.markers = [];
     segment.uri = path.basename(plUrl.pathname);
     segment.discontinuity = true;
-    segment.key.uri = path.basename(keyUrl.pathname);
     cueInSegments.push(segment);
   }
 
@@ -145,6 +148,19 @@ function checkArgs(args, prefix, defaultValue=false) {
   }
   const v = arg.slice(prefix.length);
   return v === '' ? true : v;
+}
+
+function isCueIn(segment) {
+  if (segment.dateRange) {
+    return !!segment.dateRange.end;
+  }
+
+  for (const marker of segment.markers) {
+    if (marker.type === 'IN') {
+      return true;
+    }
+  }
+  return false;
 }
 
 function formatDate(dt) {
